@@ -6,7 +6,7 @@ var tztoken = {
     };
     return eztz.rpc.call("/chains/main/blocks/head/context/contracts/"+token+"/big_map_get", key);
   },
-  data : function(token, to, amount){
+  data : function(to, amount){
 		var data = "0x19308cc0";
 		data += "050707";
 		data += eztz.tezos.encodeRawBytes(eztz.utility.sexp2mic('"'+to+'"')).toLowerCase();
@@ -16,6 +16,10 @@ var tztoken = {
 		return data;
   },
   transfer : function(token, from, keys, to, amount, fee, gasLimit, storageLimit, revealFee){
-		return eztz.rpc.transfer(from, keys, token, 0, fee, tztoken.data(token, to, amount), gasLimit, storageLimit, revealFee);
+    if (typeof revealFee == 'undefined') revealFee = '1269';
+    if (typeof gasLimit == 'undefined') gasLimit = '150000';
+    if (typeof storageLimit == 'undefined') storageLimit = '10';
+    if (typeof fee == 'undefined') fee = '16000';
+		return eztz.rpc.transfer(from, keys, token, 0, fee, tztoken.data(to, amount), gasLimit, storageLimit, revealFee);
   }
 };
